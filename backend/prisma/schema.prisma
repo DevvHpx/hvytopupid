@@ -1,0 +1,230 @@
+// ============================================================
+// HEAVYY TOP UP ID — Prisma schema (PostgreSQL)
+// ============================================================
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  QUEUED
+  PROCESSING
+  PENDING_SUPPLIER
+  SUCCESS
+  FAILED
+  CANCELLED
+  REFUND_PENDING
+  REFUNDED
+  MANUAL_REVIEW
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  EXPIRED
+  FAILED
+  REFUNDED
+}
+
+enum SupplierTxnStatus {
+  CREATED
+  PENDING
+  SUCCESS
+  FAILED
+  UNKNOWN
+}
+
+model Category {
+  id    String @id @default(cuid())
+  slug  String @unique
+  name  String
+  emoji String?
+  sort  Int    @default(0)
+  games Game[]
+}
+
+model Game {
+  id         String    @id @default(cuid())
+  slug       String    @unique
+  name       String
+  publisher  String?
+  logoUrl    String?
+  bannerUrl  String?
+  status     String    @default("active")
+  popular    Boolean   @default(false)
+  idFields   Json      @default("[]")
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id])
+  products   Product[]
+  orders     Order[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  gameId      String
+  game        Game     @relation(fields: [gameId], references: [id])
+  sku         String
+  name        String
+  price       Int // server-side price (integer rupiah)
+  cost        Int?
+  adminFee    Int      @default(0)
+  supplier    String // digiflazz | vipreseller | custom
+  supplierSku String?
+  badge       String?
+  status      String   @default("active")
+  sort        Int      @default(0)
+  orders      Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([gameId, sku])
+}
+
+model PaymentMethod {
+  id           String @id @default(cuid())
+  code         String @unique
+  name         String
+  type         String
+  feePercent   Float  @default(0)
+  feeFixed     Int    @default(0)
+  configStatus String @default("not_configured")
+  status       String @default("active")
+  sort         Int    @default(0)
+}
+
+model Order {
+  id             String  @id @default(cuid())
+  orderId        String  @unique // public reference HVY-YYMMDD-XXXXXX
+  idempotencyKey String? @unique
+
+  gameId    String
+  game      Game    @relation(fields: [gameId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  // pricing snapshot (server-calculated — never trusted from the client)
+  productName String
+  productSku  String
+  price       Int
+  adminFee    Int
+  total       Int
+  currency    String @default("IDR")
+
+  accountFields Json // { user_id, zone_id, ... }
+  contactEmail  String?
+  contactPhone  String?
+
+  paymentCode   String?
+  paymentStatus PaymentStatus @default(PENDING)
+  paymentRef    String?
+  paidAt        DateTime?
+
+  status      OrderStatus @default(PENDING_PAYMENT)
+  supplier    String?
+  supplierRef String? // unique reference sent to supplier (idempotency)
+  topupStatus String?
+  note        String?
+
+  attempts    Int       @default(0)
+  nextRetryAt DateTime?
+  lockedAt    DateTime?
+  lockOwner   String?
+  version     Int       @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events       OrderEvent[]
+  supplierTxns SupplierTransaction[]
+  webhooks     WebhookEvent[]
+
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+}
+
+model OrderEvent {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id])
+  type      String
+  message   String
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+}
+
+model WebhookEvent {
+  id             String    @id @default(cuid())
+  provider       String
+  externalId     String // gateway transaction / notification id
+  orderId        String?
+  order          Order?    @relation(fields: [orderId], references: [id])
+  signatureValid Boolean
+  amount         Int?
+  payloadRaw     Json // sanitized
+  headersRaw     Json?
+  processed      Boolean   @default(false)
+  processNote    String?
+  receivedAt     DateTime  @default(now())
+  processedAt    DateTime?
+
+  @@unique([provider, externalId])
+  @@index([orderId])
+}
+
+model SupplierTransaction {
+  id                String            @id @default(cuid())
+  orderId           String
+  order             Order             @relation(fields: [orderId], references: [id])
+  supplier          String
+  refId             String            @unique // idempotency reference sent to supplier
+  requestAt         DateTime?
+  responseAt        DateTime?
+  httpStatus        Int?
+  status            SupplierTxnStatus @default(CREATED)
+  supplierTrxId     String?
+  errorCode         String?
+  sanitizedResponse Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([orderId])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         String   @default("admin") // admin | operator | viewer
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actor     String?
+  action    String
+  target    String?
+  meta      Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([action])
+}
+
+model Setting {
+  key   String @id
+  value String
+}

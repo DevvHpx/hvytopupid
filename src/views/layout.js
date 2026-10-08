@@ -13,9 +13,15 @@ const NAV = [
   ['/bantuan', 'Bantuan', 'bantuan'],
 ];
 
+// Brand lockup: uploaded chrome+gem mark + wordmark.
+function brandLockup({ size = 52, cls = '' } = {}) {
+  return `<img class="brand-mark ${cls}" src="/img/brand/mark.png" alt="" width="${size}" height="${size}" fetchpriority="high">
+      <span class="brand-text"><strong>HEAVYY</strong><small>TOP UP ID</small></span>`;
+}
+
 export function renderPage({ title, description = '', active = '', body, settings = {}, scripts = [] }) {
   const brand = settings.brand_name || 'HEAVYY TOP UP ID';
-  const fullTitle = title ? `${title} — ${brand}` : `${brand} — Top Up Game Aman, Tercepat & Terpercaya`;
+  const fullTitle = title ? `${title} \u2014 ${brand}` : `${brand} \u2014 Top Up Game Aman, Tercepat & Terpercaya`;
   const desc = description || 'Top up game favoritmu dalam hitungan detik. Proses otomatis 24 jam, harga bersaing, dan aman. Mobile Legends, Free Fire, PUBG Mobile, Genshin Impact, dan banyak lagi.';
 
   const navLinks = NAV.map(([href, label, key]) =>
@@ -33,7 +39,10 @@ export function renderPage({ title, description = '', active = '', body, setting
 <meta property="og:title" content="${esc(fullTitle)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:type" content="website">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:image" content="/img/brand/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
@@ -44,7 +53,7 @@ export function renderPage({ title, description = '', active = '', body, setting
 <header class="nav">
   <div class="container nav-inner">
     <a class="brand" href="/" aria-label="${esc(brand)}">
-      <img src="/img/brand/logo.svg" alt="${esc(brand)}" width="620" height="140" fetchpriority="high">
+      ${brandLockup({ size: 52 })}
     </a>
     <nav class="nav-links" aria-label="Navigasi utama">${navLinks}</nav>
     <div class="nav-actions">
@@ -60,7 +69,9 @@ export function renderPage({ title, description = '', active = '', body, setting
 <footer class="footer">
   <div class="container footer-grid">
     <div class="brand-col">
-      <img src="/img/brand/logo.svg" alt="${esc(brand)}" width="620" height="140" style="height:38px;width:auto">
+      <span class="brand brand-footer">
+        ${brandLockup({ size: 40 })}
+      </span>
       <p>Platform top-up game otomatis. Proses cepat, harga bersaing, dan aman. Kami tidak pernah meminta password, OTP, atau data login akun game kamu.</p>
       <div class="pay-logos">
         <span>QRIS</span><span>GoPay</span><span>OVO</span><span>DANA</span><span>ShopeePay</span><span>Virtual Account</span><span>Alfamart</span><span>Indomaret</span>
@@ -92,7 +103,7 @@ export function renderPage({ title, description = '', active = '', body, setting
   <div class="search-box">
     <form id="searchForm" action="/game" method="get">
       ${icon('search')}
-      <input type="search" name="q" id="searchInput" placeholder="Cari game… (contoh: Mobile Legends)" autocomplete="off" aria-label="Kata kunci pencarian">
+      <input type="search" name="q" id="searchInput" placeholder="Cari game\u2026 (contoh: Mobile Legends)" autocomplete="off" aria-label="Kata kunci pencarian">
       <button type="button" class="icon-btn" id="closeSearch" aria-label="Tutup">${icon('close')}</button>
     </form>
     <div class="search-results" id="searchResults"></div>

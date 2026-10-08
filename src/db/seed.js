@@ -115,7 +115,7 @@ for (const g of games) {
   const [name, slug, publisher, cat, fields, instr, val, pop, sort] = g;
   const r = insGame.run(
     name, slug, publisher, catId[cat],
-    `/img/games/${slug}.svg`, `/img/banners/${slug}.svg`,
+    `/img/games/${slug}.png`, `/img/banners/${slug}.png`,
     JSON.stringify(fields), instr, val, pop, sort
   );
   gameId[slug] = r.lastInsertRowid;
@@ -274,10 +274,10 @@ for (const p of payments) insPay.run(...p);
 
 // ---------- Promos ----------
 const promos = [
-  ['Diskon s/d 12% Semua Diamond', 'Berlaku untuk semua game MOBA & Battle Royale.', 'Potongan otomatis diterapkan pada produk bertanda promo. Tanpa kode.', '', 'DISKON', '/img/banners/mobile-legends.svg', '/game', 1],
-  ['Cashback E-Wallet 20%', 'Bayar pakai GoPay / OVO / DANA, dapat cashback hingga Rp 10.000.', 'Cashback masuk ke saldo e-wallet maksimal 1x24 jam setelah transaksi sukses.', 'CASHBACK20', 'CASHBACK', '/img/banners/free-fire.svg', '/game', 2],
-  ['Bonus Robux Spesial', 'Beli 800 Robux, dapat bonus 100 Robux.', 'Bonus otomatis ditambahkan ke akun Roblox kamu.', '', 'BONUS', '/img/banners/roblox.svg', '/game/roblox', 3],
-  ['Top Up Pertama Bebas Admin', 'Pengguna baru tidak dikenakan biaya admin pada transaksi pertama.', 'Otomatis untuk transaksi pertama per akun.', 'NEWBIE', 'NEW', '/img/banners/genshin-impact.svg', '/game', 4],
+  ['Diskon s/d 12% Semua Diamond', 'Berlaku untuk semua game MOBA & Battle Royale.', 'Potongan otomatis diterapkan pada produk bertanda promo. Tanpa kode.', '', 'DISKON', '/img/banners/mobile-legends.png', '/game', 1],
+  ['Cashback E-Wallet 20%', 'Bayar pakai GoPay / OVO / DANA, dapat cashback hingga Rp 10.000.', 'Cashback masuk ke saldo e-wallet maksimal 1x24 jam setelah transaksi sukses.', 'CASHBACK20', 'CASHBACK', '/img/banners/free-fire.png', '/game', 2],
+  ['Bonus Robux Spesial', 'Beli 800 Robux, dapat bonus 100 Robux.', 'Bonus otomatis ditambahkan ke akun Roblox kamu.', '', 'BONUS', '/img/banners/roblox.png', '/game/roblox', 3],
+  ['Top Up Pertama Bebas Admin', 'Pengguna baru tidak dikenakan biaya admin pada transaksi pertama.', 'Otomatis untuk transaksi pertama per akun.', 'NEWBIE', 'NEW', '/img/banners/genshin-impact.png', '/game', 4],
 ];
 const insPromo = db.prepare(`INSERT INTO promos
   (title,subtitle,description,code,badge,image,link,sort_order) VALUES (?,?,?,?,?,?,?,?)`);
