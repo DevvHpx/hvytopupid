@@ -1,0 +1,26 @@
+{
+  "name": "hvytopupid",
+  "version": "1.0.0",
+  "description": "HEAVYY TOP UP ID — platform top-up game otomatis (aman, tercepat, terpercaya di Indonesia)",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node --no-warnings server.js",
+    "dev": "node --no-warnings --watch server.js",
+    "seed": "node --no-warnings src/db/seed.js",
+    "reset": "node --no-warnings src/db/seed.js --reset"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "keywords": [
+    "topup",
+    "game",
+    "indonesia",
+    "marketplace"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
