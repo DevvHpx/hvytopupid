@@ -30,6 +30,6 @@
 
 ## 5. Delivery
 - [x] README documentation
-- [ ] Push to GitHub (DevvHpx/hvytopupid) via branch + PR
-- [ ] Run server, expose port for preview
-- [ ] Final summary + attachments
+- [x] Push to GitHub (DevvHpx/hvytopupid) via branch + PR (#1)
+- [x] Static preview deployment (expose-port tunnel unavailable in env; deployed static snapshot instead)
+- [x] Final summary + attachments
