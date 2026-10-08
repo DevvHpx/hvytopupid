@@ -34,5 +34,5 @@
 - [x] README for backend
 
 ## 8. Delivery
-- [ ] Push to GitHub (branch + PR)
+- [x] Push to GitHub (branch feat/heavyy-topup-platform + PR #1 updated)
 - [ ] Final summary + attachments
